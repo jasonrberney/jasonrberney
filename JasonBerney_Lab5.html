@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Selection with query geometry from another task (GP result)</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.15/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.15/esri/css/esri.css">
+    <style>
+    html, body {
+      padding:0;
+      margin:1%;
+      height:100%;
+    }
+    body {
+      text-align: center;
+      background-color: linen;
+      font-family: Arial;
+    }
+    #mapDiv {
+      height: 500px;
+      border-style: groove;
+      border-width: 10px;
+
+    }
+    #messages {
+      font-family: Times; 
+    }
+    </style>   
+
+    <script src="https://js.arcgis.com/3.15/"></script>
+    <script>
+      var map, censusBlockPointsLayer, query;
+      require([
+        "esri/map", "esri/InfoTemplate", 
+        "esri/graphic", "esri/layers/FeatureLayer",
+        "esri/tasks/query", "esri/tasks/QueryTask", 
+        "esri/tasks/Geoprocessor", "esri/tasks/FeatureSet",
+        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleFillSymbol", 
+        "esri/symbols/SimpleLineSymbol", "esri/config",
+        "esri/Color", "dojo/dom", "dojo/domReady!"
+      ], function(
+        Map, InfoTemplate, 
+        Graphic, FeatureLayer,
+        Query, QueryTask, 
+        Geoprocessor, FeatureSet,
+        SimpleMarkerSymbol, SimpleFillSymbol, 
+        SimpleLineSymbol, esriConfig,
+        Color, dom
+      ) {
+        esriConfig.defaults.io.proxyUrl = "/proxy/";
+        esriConfig.defaults.io.alwaysUseProxy = false;
+        
+        map = new Map("mapDiv", { 
+          basemap: "osm",
+          center: [-122.3331, 47.6097],
+          zoom: 13
+        });
+        
+        //listen for when map is loaded and then add query functionality
+        map.on("load", initFunctionality);
+
+        censusBlockPointsLayer = new FeatureLayer("https://services3.arcgis.com/J1Locv0GPOt6yBRR/arcgis/rest/services/King_County_Common_Interest/FeatureServer/0", {
+          mode: FeatureLayer.MODE_SELECTION,
+          infoTemplate: new InfoTemplate("${NAME}", "Address: ${ADDRESS}<br>Abbreviated Name: ${ABB_NAME}<br>Zip: ${ZIPCODE}"),
+          outFields: ["NAME","ABB_NAME", "ADDRESS", "ZIPCODE"]}
+        );
+        
+        var symbol = new SimpleMarkerSymbol();
+        symbol.style = SimpleMarkerSymbol.STYLE_CIRCLE;
+        symbol.setSize(10);
+        symbol.setColor(new Color([0,170,255]));
+        censusBlockPointsLayer.setSelectionSymbol(symbol);
+        
+        map.addLayer(censusBlockPointsLayer);
+
+        censusBlockPointsLayer.on("selection-complete", function() {
+          var totalPopulation = sumPopulation(censusBlockPointsLayer.getSelectedFeatures());
+          var r = "";
+          r = "<b>There are a total of <i>" + totalPopulation + "</i> points of interest in that area. Click on a point to explore the circles which represent parks, restaurants, shopping centers and more! Enjoy!</b>";
+          dom.byId('messages').innerHTML = r;
+        });
+
+        function initFunctionality() {
+          query = new Query();
+          //GP Service Endpoint
+          var gp = new Geoprocessor("http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Network/ESRI_DriveTime_US/GPServer/CreateDriveTimePolygons");
+
+          // Listen for map onClick event
+          map.on("click", function(evt) {
+            censusBlockPointsLayer.clearSelection();
+            map.graphics.clear();
+            var symbol = new SimpleMarkerSymbol();
+            var graphic = new Graphic(evt.mapPoint, symbol);
+
+            var features= [];
+            features.push(graphic);
+            var featureSet = new FeatureSet();
+            featureSet.features = features;
+            var params = { "Input_Location": featureSet, "Drive_Times": 2 };
+            gp.outSpatialReference = map.spatialReference;
+            gp.execute(params);
+            dom.byId("messages").innerHTML = "<b>Executing GeoProcessing Task...</b>";
+          });
+
+          // Listen for GP execute-complete event
+          gp.on("execute-complete", function(evt) {
+            var feature = evt.results[0].value.features[0];
+            var symbol = new SimpleFillSymbol(
+              SimpleFillSymbol.STYLE_NULL, 
+              new SimpleLineSymbol(
+                SimpleLineSymbol.STYLE_DASHDOT, 
+                new Color([255,0,0]), 
+                3
+              ), 
+              new Color([255,255,0,0.25])
+            );
+            feature.setSymbol(symbol);
+            map.graphics.add(feature);
+
+            query.geometry = feature.geometry;
+            censusBlockPointsLayer.selectFeatures(query, FeatureLayer.SELECTION_NEW);
+            dom.byId("messages").innerHTML = "<b>Selecting Features...</b>";
+          });
+        }
+
+        function sumPopulation(features) {
+          var popTotal = 0;
+          for (var x = 0; x < features.length; x++) {
+            popTotal += 1;
+            /*popTotal = popTotal + features[x].attributes["NAME"];*/
+          }
+          return popTotal;
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <h2 style="font-family: Times New Roman">
+    Click the map to discover which areas of interest are within a two minute drive of that location!
+    </h2>
+    <div id="mapDiv"></div>
+    <span id="messages"></span>
+  </body>
+</html>

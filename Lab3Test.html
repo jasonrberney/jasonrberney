@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Leaflet Lab</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+
+  		#map { 
+  			position:absolute; 
+  			top:10px; 
+  			bottom:10px; 
+  			width:100%; 
+  		}
+  		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			text-align: center;
+			border: solid 1px;			
+			line-height: 18px;
+			color: #000000;
+
+		}
+		.info h4 {
+			margin: 0 0 5px;
+			color: #000000;
+		}
+
+		.legend {
+			text-align: left;
+			line-height: 18px;
+		}
+
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: .8;
+
+
+		}
+		}
+</style>
+</head>
+
+<body>
+
+	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	
+	<!-- this is where the fullscreen js went, doesn't work in website -->
+
+	<script type="text/javascript" src="urbanpop.js"></script>
+
+	<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v0.0.4/leaflet.fullscreen.css' rel='stylesheet' />
+	 
+	<div id='map'></div>
+		<script>
+			var map = L.map('map').setView([20, 0], 2);
+
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiamFzb25yYmVybmV5IiwiYSI6ImNpZ3JncGw3eDAyMXB1Nm0xMDNub2tvdTkifQ.rsuFFkThKDmRJdlWw2TVNA', {
+			maxZoom: 12,
+			minZoom: 2,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			id: 'jasonrberney.o662ef0a' //mapbox.streets-basic for legend to match
+		}).addTo(map);
+
+				map.attributionControl.addAttribution('Data from ' +
+  					'<a href="http://data.un.org/Data.aspx?d=MDG&f=seriesRowID%3a751">' +
+  						'Global Indicator Database, and </a>' + '<a href="http://cdiac.ornl.gov/">' +
+  						'CDIAC</a>' );			
+
+    			var info = L.control();
+
+					info.onAdd = function (map) {	
+					this._div = L.DomUtil.create('div', 'info');
+					this.update();
+					return this._div;
+					};
+
+					info.update = function (props) {
+					this._div.innerHTML = '<h4>Percentage of People per Country Living in Urban Areas in 2014</h4>' +  (props ?
+				 	 + props.Year_2014 + '% is the calculated value for ' + props.CNTRY_NAME
+					: 'Click a country for more information <p>(Darker Hue = Higher Percentage of People in an Urban Population)</p>');
+					};
+					info.addTo(map);
+
+					function getColor(d) {
+					 return d == 100   ? '#993404' :
+					 		d > 80     ? '#d95f0e' :
+			       			d > 60    ? '#fe9929' :
+			       			d > 40    ? '#fed98e' :
+			       			d > 20      ? '#ffffd4' :
+
+			                                   '#E9E9E9';
+					}
+					//white dotted outline of countries with data
+					function style(feature) {
+						return {
+							weight: 1,
+							opacity: 1,
+							color: '#0066ff',
+							dashArray: '2',
+							fillOpacity: 0.7,
+							fillColor: getColor(feature.properties.Year_2014)//changed value from value above in blue
+						};
+					}
+					//highlights country when hovered over to get info
+					function highlightFeature(e) {
+						var layer = e.target;
+
+						layer.setStyle({
+							weight: 2,
+							color: '#000000',
+							dashArray: '',
+							fillOpacity: 0.2
+						});
+
+						if (!L.Browser.ie && !L.Browser.opera) {
+						layer.bringToFront();
+						}
+
+						info.update(layer.feature.properties);
+					}
+					//adds data to map
+					var geojson;
+
+					function resetHighlight(e) {
+						geojson.resetStyle(e.target);
+						info.update();
+					}
+
+					function zoomToFeature(e) {
+						map.fitBounds(e.target.getBounds());
+					}
+
+					function onEachFeature(feature, layer) {
+						layer.on({
+							mouseover: highlightFeature,
+							mouseout: resetHighlight,
+							click: zoomToFeature
+						});
+					}
+
+					geojson = L.geoJson(upop, {
+						style: style,
+						onEachFeature: onEachFeature
+					}).addTo(map);
+					//legend controls and info
+					var legend = L.control({position: 'bottomright'});
+
+					legend.onAdd = function (map) {
+
+						var div = L.DomUtil.create('div', 'info legend'),
+							grades = [0, 20, 40, 60, 80, 100],
+							key_labels = ["0 - 20%", "20 - 40%", "40 - 60%", '60 - 80%', '80 - 100%'],
+							labels = ["Percent of Population"],
+							from, to;
+
+						//labels.push('<i style="background: #eeedd8"></i> ' + 'No Data Available');
+
+						for (var i = 0; i < grades.length; i++) {
+							from = grades[i];
+							to = grades[i + 1];
+
+							labels.push(
+								'<i style="background:' + getColor(from + 1 ) + '"></i> ' + key_labels[i])
+								/*from + (to ? '&ndash;' + to : ''))*/;
+						} //changed '1' to get right colors on the legend but first field is still second green, not sure why??
+
+						div.innerHTML = labels.join('<br>');
+						return div;			
+
+					};
+
+					legend.addTo(map);
+
+					L.control.scale().addTo(map);
+
+					// fullscreen control that doesn't work...L.control.fullscreen().addTo(map);
+					
+</script>
+</body>
+</html>
