@@ -94,8 +94,12 @@
 								<p id ="answers">
 										Creating and maintaining an ArcGIS Geodatabase replica is not an easy task when a database schema is ever changing. Automating replica creation when a Geodatabase has been prepared is as simple as one line of Python code using the arcpy library and passing in the correct parameters: 
 										<br><br>
+								</p>
+								<p id ="answers" style="color:blue;font-size:16px;">
 										CreateReplica_management (in_data, in_type, out_geodatabase, out_name, {access_type}, {initial_data_sender}, {expand_feature_classes_and_tables}, {reuse_schema}, {get_related_data}, {geometry_features}, archiving)
-										<br><br>
+								</p>	
+								<p id ="answers">										
+										<br>
 										But that is the easy part. You need a list of input features to be included in the replica, so how do you account for new features being added to a database replica? That feature needs to be registered as versioned. That feature must have a GlobalID. When I set out to create a script that could guide a user through creating a replica, many unforeseen circumstances came into play (as so often happens when performing advanced tasks with Esri software). In creating a truly reusable tool, this Python script would need to take user input to guide you through the state of your database and the datasets involved in the replica. For example, ask the user to indicate what environment they are using (Development? Test? Production?). What datasets are in the database compared with what the application is expecting? Are there datasets that should be added to the replica? Removed from the replica? 
 										<br><br>
 										Nearly all of these scenarios were accounted for and solved. Unfortunately, this process of recreating a replica cannot be completely automated at this time. Esri does not have an arcpy tool for unregistering a replica. This highlights my frustration with the technology that Esri puts out. Although Esri Support claims to me that this tool will exist in ArcGIS 10.6, it floors me that this functionality does not currently exist. I am hoping that next month this functionality will truly be available when I upgrade our infrastructure to 10.6, but I have my doubts.								
@@ -103,7 +107,7 @@
 							</section>
 							<section>
 								<header>
-									<h3><a name="ReactInterest">December 2017. Interested in React?</a></h3>
+									<h3><a name="ReactInterest">November 2017. Interested in React?</a></h3>
 								</header>
 								<p id ="answers">
 										React is now a popular library for building user interfaces with JavaScript. After looking into some tutorials, you will quickly find that it encompasses an entirely different representation of how a developer interacts with the DOM. When getting introduced to new technologies, sometimes getting a development environment up and running can be half the battle. If you’re interested in React and curious how to quickly set up a work environment, check out this link:
@@ -115,7 +119,7 @@
 							</section>
 							<section>
 								<header>
-									<h3><a name="UpgradeArcGIS">November 2017. Upgrade your ArcGIS Environment?</a></h3>
+									<h3><a name="UpgradeArcGIS">October 2017. Upgrade your ArcGIS Environment?</a></h3>
 								</header>
 								<p id ="answers">
 										No. Simply don’t do it if you have a stable working environment at version 10.3 or above. Clients I have worked with insist on the latest and greatest, which means always utilizing the newest technology. Therefore, upgrading our Esri infrastructure has become clockwork. Unfortunately, the last 2 releases have been a letdown. They have introduced debilitating bugs into our applications that we simply could not have foreseen. One example of this was that version 10.4.1 slowed down a mapping application that used spatial SQL views within a map service. Changing these spatial SQL views to query layers that live in the map solved our issue but caused undesired application downtime. My recommendation would be that if you do not have a specific reason for upgrading your Esri infrastructure, leave it in its functioning state until you DO have a reason for upgrading. Other issues I’ve experienced between environments include ArcGIS Server clustering and GeoEvent Server configuration. 
