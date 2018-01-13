@@ -1,3 +1,6 @@
+# Website for Jason Berney
+This repository includes the website created for Jason Berney. It was originally created using an HTML5 UP template, and then edited for personal use. 
+
 Helios by HTML5 UP
 html5up.net | @n33co
 Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
