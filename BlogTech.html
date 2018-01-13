@@ -31,7 +31,7 @@
 					<!-- Inner -->
 						<div class="inner">
 							<header>
-								<h1><a href="index.html" id="logo">Tech Blog</a></h1>
+								<h1><a href="index.html" id="logo">Tech</a></h1>
 							</header>
 						</div>
 
@@ -40,9 +40,8 @@
 						<ul>
 							<li><a href="index.html">Home</a></li>
 							<li>
-								<a href="#">Learning?</a>
+								<a href="#">Resources</a>
 								<ul>
-									<li><a href="#">What I find useful:</a></li>
 									<li>
 										<a href="#">General Tech Ed &hellip;</a>
 										<ul>
@@ -60,6 +59,7 @@
 											<li><a href="https://scotch.io/" target="_blank">scotch.io</a></li>	
 											<li><a href="https://learn.tylermcginnis.com/" target="_blank">TylerMcGinnis</a></li>																																					
 											<li><a href="http://eloquentjavascript.net/index.html" target="_blank">Eloquent JavaScript</a></li>
+											<li><a href="https://firebase.google.com/" target="_blank">Firebase</a></li>				
 											<li><a href="https://www.youtube.com/playlist?list=PL7664379246A246CB" target="_blank">Crockford on JavaScript</a></li>
 											<li><a href="http://flexboxfroggy.com/" target="_blank">Flexbox Froggy</a></li>
 										</ul>
@@ -129,9 +129,9 @@
 					<div class="container">
 						<article id="main" class="special">
 							<header>
-								<h2><a href="#">My experiences with technology...</a></h2>
+								<h2>My experiences with technology...</h2>
 								<p>
-									The following is a blog dedicated to personal experience using different technology, much of which relates to GIS. Posts below are likely to contain advice,enlightenment, struggles and achievement.
+									This blog is dedicated to my interaction with technology, much of which relates to GIS. Posts contain advice, moments of enlightenment, struggle and achievement.
 								</p>
 							</header>
 							<!--<a href="#" class="image featured"><img src="images/pic06.jpg" alt="" /></a>-->
@@ -140,7 +140,7 @@
 									<h3><a name="ReplicaUndone">December 2017. ArcSDE and a Replica Undone.</a></h3>
 								</header>
 								<p id ="answers">
-										Creating and maintaining an ArcGIS Geodatabase replica is not an easy task when a database schema is ever changing. Automating replica creation when a Geodatabase has been prepared is as simple as one line of Python code using the arcpy library and passing in the correct parameters: 
+										Creating and maintaining an ArcGIS Geodatabase replica is not an easy task when a database schema is ever-changing. It is extremely difficult to maintain an ArcGIS Geodatabase replica because the replica must be recreated every time there is a change in the database schema. When an ArcGIS Administrator is managing multiple environments, it can be very time consuming to recreate various replicas that may exist within each environment. Therefore, I saw this task as a good candidate for automation. Creating a replica using Python is as simple as one line of Python code using the arcpy library and passing in the correct parameters:  
 										<br><br>
 								</p>
 								<p id ="answers" style="color:blue;font-size:16px;">
@@ -148,9 +148,9 @@
 								</p>	
 								<p id ="answers">										
 										<br>
-										But that is the easy part. You need a list of input features to be included in the replica, so how do you account for new features being added to a database replica? That feature needs to be registered as versioned. That feature must have a GlobalID. When I set out to create a script that could guide a user through creating a replica, many unforeseen circumstances came into play (as so often happens when performing advanced tasks with Esri software). In creating a truly reusable tool, this Python script would need to take user input to guide you through the state of your database and the datasets involved in the replica. For example, ask the user to indicate what environment they are using (Development? Test? Production?). What datasets are in the database compared with what the application is expecting? Are there datasets that should be added to the replica? Removed from the replica? 
+										But that’s the easy part. You need a list of input features to be included in the replica, so how do you account for new features being added to a database replica? That feature needs to be registered as versioned, and also must have a GlobalID. When I set out to create a script that could guide a user through creating a replica, many unforeseen circumstances came into play (as so often happens when performing advanced tasks with Esri software). In creating a truly reusable tool, this Python script would need to take user input to guide you through the state of your database and the datasets involved in the replica. For example, ask the user to indicate what environment they are using (Development? Test? Production?). What datasets are in the database compared with what the application is expecting? Are there datasets that should be added to the replica? Removed from the replica? 
 										<br><br>
-										Nearly all of these scenarios were accounted for and solved. Unfortunately, this process of recreating a replica cannot be completely automated at this time. Esri does not have an arcpy tool for unregistering a replica. This highlights my frustration with the technology that Esri puts out. Although Esri Support claims to me that this tool will exist in ArcGIS 10.6, it floors me that this functionality does not currently exist. I am hoping that next month this functionality will truly be available when I upgrade our infrastructure to 10.6, but I have my doubts.								
+										Nearly all of these scenarios were accounted for and solved. Unfortunately, this process of recreating a replica cannot be completely automated at this time. Esri does not have an arcpy tool for unregistering a replica. This highlights my frustration with the technology that Esri puts out. Although Esri Support claims that this tool will exist in ArcGIS 10.6, it floors me that this functionality does not currently exist. I am hoping that next month this functionality will be available when I upgrade our infrastructure to 10.6, but I have my doubts. 							
 								</p>
 							</section>
 							<section>
@@ -170,7 +170,7 @@
 									<h3><a name="UpgradeArcGIS">October 2017. Upgrade your ArcGIS Environment?</a></h3>
 								</header>
 								<p id ="answers">
-										No. Simply don’t do it if you have a stable working environment at version 10.3 or above. Clients I have worked with insist on the latest and greatest, which means always utilizing the newest technology. Therefore, upgrading our Esri infrastructure has become clockwork. Unfortunately, the last 2 releases have been a letdown. They have introduced debilitating bugs into our applications that we simply could not have foreseen. One example of this was that version 10.4.1 slowed down a mapping application that used spatial SQL views within a map service. Changing these spatial SQL views to query layers that live in the map solved our issue but caused undesired application downtime. My recommendation would be that if you do not have a specific reason for upgrading your Esri infrastructure, leave it in its functioning state until you DO have a reason for upgrading. Other issues I’ve experienced between environments include ArcGIS Server clustering and GeoEvent Server configuration. 
+										No. Simply don’t do it if you have a stable working environment at version 10.3 or above. Clients I have worked with insist on the latest and greatest, which means always utilizing the newest technology. Therefore, upgrading our Esri infrastructure has become clockwork. Unfortunately, the last 2 releases have been a letdown. They have introduced debilitating bugs into our applications that we simply could not have foreseen. For example, version 10.4.1 slowed down a mapping application that used spatial SQL views within a map service. Changing these spatial SQL views to query layers in the map solved our issue, but still caused undesired application downtime. Other issues I’ve experienced between releases include ArcGIS Server clustering and GeoEvent Server configuration. My recommendation: if you do not have a specific reason for upgrading your Esri infrastructure, leave it in it’s functioning state until you DO have a reason for upgrading. 
                                 </p>
                             </section>
 						</article>
@@ -182,13 +182,13 @@
 					<section id="features" class="container special">
 						<header>
 							<h2>Blogs</h2>
-							<p>These three Blogs highlight my life, tech and books.</p>
+							<p>These three Blogs highlight my life, technical experience and some recent reads.</p>
 						</header>
 						<div class="row">
 							<article class="4u 12u(mobile) special">
 								<a href="BlogLife.html" class="image featured"><img src="images/BlogLife/AlaskaPortrait.jpg" alt="" /></a>
 								<header>
-									<h3><a href="BlogLife.html">Life Blog</a></h3>
+									<h3><a href="BlogLife.html">Life</a></h3>
 								</header>
 							</article>
 							<article class="4u 12u(mobile) special">
@@ -198,7 +198,7 @@
 										https://www.brookings.edu/blog/the-avenue/2017/11/21/tech-empowers-tech-polarizes/
 								-->
 								<header>
-									<h3><a href="BlogTech.html">Tech Blog</a></h3>
+									<h3><a href="BlogTech.html">Technology</a></h3>
 								</header>
 							</article>
 							<article class="4u 12u(mobile) special">
@@ -208,7 +208,7 @@
 										https://www.economist.com/news/books-and-arts/21732079-what-we-wrote-when-we-werent-office-books-economist-writers-2017
 								-->
 								<header>
-									<h3><a href="BlogBooks.html">Book Blog</a></h3>
+									<h3><a href="BlogBooks.html">Books</a></h3>
 								</header>
 							</article>
 						</div>
@@ -224,9 +224,9 @@
 								<!-- Contact -->
 									<section class="contact">
 										<header>
-											<h3>Wanna contact me?</h3>
+												<h3>Interested in connecting?</h3>
 										</header>
-										<p>Please feel free! I am available on a variety of platforms.<br><br><a href="mailto:jasonrberney@gmail.com">Email Me</a></p>
+										<p><a href="mailto:jasonrberney@gmail.com">Email Me</a></p>
 										<ul class="icons">
 											<!--<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
 											<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>-->
