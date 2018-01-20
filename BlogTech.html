@@ -31,7 +31,7 @@
 					<!-- Inner -->
 						<div class="inner">
 							<header>
-								<h1><a href="index.html" id="logo">Tech</a></h1>
+								<h1>Tech</h1>
 							</header>
 						</div>
 
@@ -137,20 +137,98 @@
 							<!--<a href="#" class="image featured"><img src="images/pic06.jpg" alt="" /></a>-->
 							<section>
 								<header>
+									<h3><a name="TwitterFolium">January 2018. Mapping Tweets with Folium.</a></h3>
+								</header>
+								<p id ="answers">
+									I resurrected some Python code the other day that scrapes Twitter for tweets containing text from some user input. The script grabs data from the Twitter Rest API, which returns data in JSON format. It then geocodes the tweets and plots them on a map that is created using the Python library Folium. If you would like to try this yourself please follow along, but first, you need a Twitter account to acquire data from the API. Once you have a Twitter account, you can create a new “application” here: <a href="https://apps.twitter.com/" target="_blank">https://apps.twitter.com/</a>. This application will provide you with the necessary Keys and Access Tokens needed for secure authorization to retrieve information from Twitter. Easy enough!  
+									<br><br>
+								</p>
+								<p id ="answers">
+									You can then use this <a href="https://github.com/ckoepp/TwitterSearch" target="_blank">TwitterSearch library</a> to easily search through the <a href="https://developer.twitter.com/en/docs/basics/getting-started" target="_blank">Twitter API</a>. This library is great because you can search Twitter without having to know too much about the API. First use your Key and Access Token to create a TwitterSearch object:
+									<br><br>
+								</p>
+								<p id ="answers" style="color:blue;font-size:16px;">
+									ts = TwitterSearch(<br>
+								</p>
+								<p id ="answers" style="color:blue;font-size:16px;margin-left: 6em">
+										consumer_key = ‘XXX’,<br>
+										consumer_secret = ‘XXX’,<br>
+										access_token = ‘XXX’,<br>
+										access_token_secret = ‘XXX’<br>
+									)
+								</p><br>	
+								<p id ="answers">										
+									Create a TwitterSearchOrder object that contains words to search for:
+								</p><br>
+								<p id ="answers" style="color:blue;font-size:16px;">
+									tso = TwitterSearchOrder( )<br>
+									tso.set_keywords([word])						
+								</p><br>
+								<p id ="answers">
+									Finally, create a loop to iterate through tweets and print the content!							
+								</p><br>
+								<p id ="answers" style="color:blue;font-size:16px;">
+									for tweet in ts.search_tweets_iterable(tso):			
+								</p>
+								<p id ="answers" style="color:blue;font-size:16px;margin-left: 6em">
+									twt = tweet['text']<br>
+									user = tweet['user']['screen_name']<br>
+									tweetContent = ( '@%s tweeted: %s' % ( tweet['user']['screen_name'], tweet['text'] ) )<br>
+									print tweetContent							 
+								</p><br>
+								<p id ="answers">
+									Now, if you’re interested in visualizing the tweets, this is where it gets fun. Data visualization is what makes GIS exciting, so let’s throw these tweets on a map. To accomplish this, we need coordinates and therefore we’ll use a geocoding service, so here’s a free one called geopy: <a href="https://github.com/geopy/geopy" target="_blank">https://github.com/geopy/geopy</a>
+								</p><br>
+								<p id ="answers" style="color:blue;font-size:16px;">
+									from geopy import geocoders<br><br>
+									def geo(location):	
+								</p>
+								<p id ="answers" style="color:blue;font-size:16px;margin-left: 6em">
+									g = geocoders.Nominatim( )<br>
+									loc = g.geocode(location, timeout=10)<br>
+									return loc.latitude, loc.longitude		 
+								</p><br>
+								<p id ="answers">
+									Then we can get our latitude and longitude using the function above:
+								</p><br>
+								<p id ="answers" style="color:blue;font-size:16px;">
+									(lat, lng) = geo(tweet['contributors'], ['coordinates'])
+								</p><br>
+								<p id ="answers">
+									Lastly, you can use these coordinates to add a marker to a Folium map. So, first initialize a map and then as you loop through the tweets, add the markers to your map!
+								</p><br>
+								<p id ="answers" style="color:blue;font-size:16px;">
+									import folium<br><br>									
+									myMap = folium.Map(tiles='Mapbox Control room')<br><br>
+									# create markers and add them to the map as you loop over tweets<br>
+									folium.Marker([lat, lng], popup=tweetContent).add_to(myMap)<br><br>
+									# save map to whatever directory you're in<br>
+									myMap.save('MyMap.html')<br><br>
+									# Open the map in a browser!<br>
+									webbrowser.open('file://'+ os.path.realpath('MyMap.html'))										
+								</p><br>
+								<p id ="answers">
+									You can find a full script of this example on my github: <a href="https://github.com/jasonrberney/FoliumMappingTwitterAPI" target="_blank">https://github.com/jasonrberney/FoliumMappingTwitterAPI</a>
+								</p>
+							</section>
+							<section>
+								<header>
 									<h3><a name="ReplicaUndone">December 2017. ArcSDE and a Replica Undone.</a></h3>
 								</header>
 								<p id ="answers">
-										Creating and maintaining an ArcGIS Geodatabase replica is not an easy task when a database schema is ever-changing. It is extremely difficult to maintain an ArcGIS Geodatabase replica because the replica must be recreated every time there is a change in the database schema. When an ArcGIS Administrator is managing multiple environments, it can be very time consuming to recreate various replicas that may exist within each environment. Therefore, I saw this task as a good candidate for automation. Creating a replica using Python is as simple as one line of Python code using the arcpy library and passing in the correct parameters:  
-										<br><br>
+									Creating and maintaining an ArcGIS Geodatabase replica is not an easy task when a database schema is ever-changing. It is extremely difficult to maintain an ArcGIS Geodatabase replica because the replica must be recreated every time there is a change in the database schema. When an ArcGIS Administrator is managing multiple environments, it can be very time consuming to recreate various replicas that may exist within each environment. Therefore, I saw this task as a good candidate for automation. Creating a replica using Python is as simple as one line of Python code using the arcpy library and passing in the correct parameters:  
+									<br><br>
 								</p>
 								<p id ="answers" style="color:blue;font-size:16px;">
-										CreateReplica_management (in_data, in_type, out_geodatabase, out_name, {access_type}, {initial_data_sender}, {expand_feature_classes_and_tables}, {reuse_schema}, {get_related_data}, {geometry_features}, archiving)
+									CreateReplica_management (in_data, in_type, out_geodatabase, out_name, {access_type}, {initial_data_sender}, {expand_feature_classes_and_tables}, {reuse_schema}, {get_related_data}, {geometry_features}, archiving)
+									<br><br>
+									{ } = optional
 								</p>	
 								<p id ="answers">										
-										<br>
-										But that’s the easy part. You need a list of input features to be included in the replica, so how do you account for new features being added to a database replica? That feature needs to be registered as versioned, and also must have a GlobalID. When I set out to create a script that could guide a user through creating a replica, many unforeseen circumstances came into play (as so often happens when performing advanced tasks with Esri software). In creating a truly reusable tool, this Python script would need to take user input to guide you through the state of your database and the datasets involved in the replica. For example, ask the user to indicate what environment they are using (Development? Test? Production?). What datasets are in the database compared with what the application is expecting? Are there datasets that should be added to the replica? Removed from the replica? 
-										<br><br>
-										Nearly all of these scenarios were accounted for and solved. Unfortunately, this process of recreating a replica cannot be completely automated at this time. Esri does not have an arcpy tool for unregistering a replica. This highlights my frustration with the technology that Esri puts out. Although Esri Support claims that this tool will exist in ArcGIS 10.6, it floors me that this functionality does not currently exist. I am hoping that next month this functionality will be available when I upgrade our infrastructure to 10.6, but I have my doubts. 							
+									<br>
+									But that’s the easy part. You need a list of input features to be included in the replica, so how do you account for new features being added to a database replica? That feature needs to be registered as versioned, and also must have a GlobalID. When I set out to create a script that could guide a user through creating a replica, many unforeseen circumstances came into play (as so often happens when performing advanced tasks with Esri software). In creating a truly reusable tool, this Python script would need to take user input to guide you through the state of your database and the datasets involved in the replica. For example, ask the user to indicate what environment they are using (Development? Test? Production?). What datasets are in the database compared with what the application is expecting? Are there datasets that should be added to the replica? Removed from the replica? 
+									<br><br>
+									Nearly all of these scenarios were accounted for and solved. Unfortunately, this process of recreating a replica cannot be completely automated at this time. Esri does not have an arcpy tool for unregistering a replica. This highlights my frustration with the technology that Esri puts out. Although Esri Support claims that this tool will exist in ArcGIS 10.6, it floors me that this functionality does not currently exist. I am hoping that next month this functionality will be available when I upgrade our infrastructure to 10.6, but I have my doubts. 							
 								</p>
 							</section>
 							<section>
@@ -158,11 +236,16 @@
 									<h3><a name="ReactInterest">November 2017. Interested in React?</a></h3>
 								</header>
 								<p id ="answers">
-										React is now a popular library for building user interfaces with JavaScript. After looking into some tutorials, you will quickly find that it encompasses an entirely different representation of how a developer interacts with the DOM. When getting introduced to new technologies, sometimes getting a development environment up and running can be half the battle. If you’re interested in React and curious how to quickly set up a work environment, check out this link:
-										<br><br>
-										<a href="https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel" target="_blank">https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel</a>
-										<br><br>
-										Good luck! :)										
+									React is now a popular library for building user interfaces with JavaScript. After looking into some tutorials, you will quickly find that it encompasses an entirely different representation of how a developer interacts with the DOM. When getting introduced to new technologies, sometimes getting a development environment up and running can be half the battle. If you’re interested in React and curious how to quickly set up a work environment, check out this link:
+									<br><br>
+									<a href="https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel" target="_blank">https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel</a>
+									<br><br>
+									<!--
+										"Top Shelf Web Development Training" scotch.io,
+											https://scotch.io/
+									-->
+									<a class="image featured" href="https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel" target="_blank"><img src="images/BlogTech/scotchio.png" alt="" /></a>
+									Good luck! :)										
 								</p>
 							</section>
 							<section>
@@ -170,9 +253,21 @@
 									<h3><a name="UpgradeArcGIS">October 2017. Upgrade your ArcGIS Environment?</a></h3>
 								</header>
 								<p id ="answers">
-										No. Simply don’t do it if you have a stable working environment at version 10.3 or above. Clients I have worked with insist on the latest and greatest, which means always utilizing the newest technology. Therefore, upgrading our Esri infrastructure has become clockwork. Unfortunately, the last 2 releases have been a letdown. They have introduced debilitating bugs into our applications that we simply could not have foreseen. For example, version 10.4.1 slowed down a mapping application that used spatial SQL views within a map service. Changing these spatial SQL views to query layers in the map solved our issue, but still caused undesired application downtime. Other issues I’ve experienced between releases include ArcGIS Server clustering and GeoEvent Server configuration. My recommendation: if you do not have a specific reason for upgrading your Esri infrastructure, leave it in it’s functioning state until you DO have a reason for upgrading. 
+									No. Simply don’t do it if you have a stable working environment at version 10.3 or above. Clients I have worked with insist on the latest and greatest, which means always utilizing the newest technology. Therefore, upgrading our Esri infrastructure has become clockwork. Unfortunately, the last 2 releases have been a letdown. They have introduced debilitating bugs into our applications that we simply could not have foreseen. For example, version 10.4.1 slowed down a mapping application that used spatial SQL views within a map service. Changing these spatial SQL views to query layers in the map solved our issue, but still caused undesired application downtime. Other issues I’ve experienced between releases include ArcGIS Server clustering and GeoEvent Server configuration. My recommendation: if you do not have a specific reason for upgrading your Esri infrastructure, leave it in it’s functioning state until you DO have a reason for upgrading. 
                                 </p>
-                            </section>
+							</section>
+							<section>
+								<header>
+									<h3><a name="GeoEventPI">March 2017. Esri GeoEvent Server vs. OSIsoft PI Web API</a></h3>
+								</header>
+								<p id ="answers">
+									In a time when data seems infinite, companies are continuously looking for ways to efficiently visualize that data. Many people desire real-time data feeds for information that are essential to business operations. Esri and OSIsoft provide one process workflow for providing real-time data to applications through the 	<a href="https://www.osisoft.com/corporate/gis/" target="_blank">PI Integrator for Esri ArcGIS</a> and the GeoEvent Processor. There is another fairly easy way to accomplish sending real-time data to a web application, without as many moving pieces. Specifically, there is a whole infrastructural piece called the Esri GeoEvent processor that you might elect to omit. Like everything, there are pros and cons to that decision. 
+									<br><br>
+									The Integrator uses Esri’s ArcGIS GeoEvent Processor to update a Feature Service hosted on an Esri ArcGIS Server. By updating a Feature Service, the values of that Feature (whether it be a table or spatial feature) are changed in the database and reflected on a webpage.
+									<br><br>
+									As an alternate to the PI Integrator for Esri, you can create a similar solution that delivers real-time data to a web application solely using OSIsoft’s PI System. The alternative implementation uses the <a href="https://techsupport.osisoft.com/Documentation/PI-Web-API/help.html" target="_blank">PI Web API</a> as a source for real-time data. Through the PI Web API, you have the ability to navigate and retrieve information from your AF Databases, AF Models, as well as PI Points and their values. Furthermore, PI Web API Channels allow you to retrieve a constant stream of data from one PI Point or a set of PI Points. The PI Web API Channels leverage Web Socket protocols to provide data streaming through the PI Web API. With this method of data delivery, you are able to continually update a dataset on the front end of a web mapping application, adding to an overall Geographic Information System (GIS). One advantageous aspect of this data retrieval method is that it can be incorporated into other mapping software and leveraged with various geospatial API’s such as, Esri, Mapbox and open source platforms like the OpenGeo Suite. So, for those companies who have a PI System and want to visualize real-time spatial data, check out the PI Web API and the PI Web API Channels!			
+								</p>
+							</section>
 						</article>
 					</div>
 				</div>
